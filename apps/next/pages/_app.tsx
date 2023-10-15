@@ -12,10 +12,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Solito Example App</title>
+        <title>gardenstarter!</title>
         <meta
           name="description"
-          content="Expo + Next.js with Solito. By Fernando Rojo."
+          content="The simplest path from 0 to a thriving chemical-free veggie garden"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
