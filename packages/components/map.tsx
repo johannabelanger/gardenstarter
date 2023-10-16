@@ -14,7 +14,7 @@ const center = {
 
 function SunMap() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  
+  console.log("Api key: ", apiKey);
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: apiKey ?? "invalid key"
