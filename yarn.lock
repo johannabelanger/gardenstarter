@@ -8791,7 +8791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-moti@latest:
+"moti@npm:latest":
   version: 0.27.0
   resolution: "moti@npm:0.27.0"
   dependencies:
