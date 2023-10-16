@@ -14,7 +14,6 @@ const center = {
 
 function SunMap() {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  console.log("Api Key: ", apiKey);
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: apiKey ?? "invalid key"
@@ -37,6 +36,7 @@ function SunMap() {
   return isLoaded ? (
       <GoogleMap
         mapContainerStyle={containerStyle}
+        mapTypeId={google.maps.MapTypeId.SATELLITE}
         center={center}
         zoom={20}
         onLoad={onLoad}
