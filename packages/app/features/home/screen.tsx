@@ -10,67 +10,29 @@ import SunMap from '../../../components/map';
 import {useState, useEffect} from 'react';
 
 export function HomeScreen() {
+  // Mom and Dad's 44.59194405984583, -123.25520772742998
+const corvallis = {latitude: 44.59194405984583, longitude: -123.25520772742998}
+// Oslo 59.89564166395883, 10.785743417155842
+const oslo = {latitude: 59.89564166395883, longitude: 10.785743417155842}
+// Johannesberg -26.181043152226504, 28.025551235811378
+const joburg = {latitude: -26.181043152226504, longitude: 28.025551235811378}
   return (
       <View className="flex-1 items-center justify-center p-3">
-        <H1>Welcome to gardenstarter!</H1>
-        <div>
-          <SunMap />
+        <H1>gardenstarter!</H1>
+        <div style={{display: "flex"}}>
+          <div>
+            <Text>Corvallis</Text>
+            <SunMap loc={corvallis} />
+          </div>
+          <div>
+            <Text>Oslo</Text>
+            <SunMap loc={oslo} />
+          </div>
+          <div>
+            <Text>Johannesburg</Text>
+            <SunMap loc={joburg} />
+          </div>
         </div>
-        <View className="max-w-xl">
-          <P className="text-center">
-            gardenstarter is built using Expo + Next.js with [NativeWind](https://nativewind.dev) for its styling & [Solito](https://solito.dev) for navigation. This screen uses the same code on Next.js and React
-            Native.
-          </P>
-          <P className="text-center">
-            Solito is made by{' '}
-            <A
-              href="https://twitter.com/fernandotherojo"
-              hrefAttrs={{
-                target: '_blank',
-                rel: 'noreferrer',
-              }}
-            >
-              Fernando Rojo
-            </A>
-            .
-          </P>
-          <P className="text-center">
-            NativeWind is made by{' '}
-            <A
-              href="https://twitter.com/mark__lawlor"
-              hrefAttrs={{
-                target: '_blank',
-                rel: 'noreferrer',
-              }}
-            >
-              Mark Lawlor
-            </A>
-            .
-          </P>
-        </View>
-        <View className="h-[32px]" />
-        <Row className="space-x-8">
-          <TextLink href="/user/fernando">Regular Link</TextLink>
-          <MotiLink
-            href="/user/fernando"
-            animate={({ hovered, pressed }) => {
-              'worklet'
-
-              return {
-                scale: pressed ? 0.95 : hovered ? 1.1 : 1,
-                rotateZ: pressed ? '0deg' : hovered ? '-3deg' : '0deg',
-              }
-            }}
-            transition={{
-              type: 'timing',
-              duration: 150,
-            }}
-          >
-            <Text selectable={false} className="text-base font-bold">
-              Moti Link
-            </Text>
-          </MotiLink>
-        </Row>
       </View>
   )
 }
