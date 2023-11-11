@@ -11,11 +11,11 @@ import {useState, useEffect} from 'react';
 
 export function HomeScreen() {
   // Mom and Dad's 44.59194405984583, -123.25520772742998
-const corvallis = {latitude: 44.59194405984583, longitude: -123.25520772742998}
+const corvallis: {latitude: number, longitude: number} = {latitude: 44.59194405984583, longitude: -123.25520772742998}
 // Oslo 59.89564166395883, 10.785743417155842
-const oslo = {latitude: 59.89564166395883, longitude: 10.785743417155842}
+const oslo: {latitude: number, longitude: number} = {latitude: 59.89564166395883, longitude: 10.785743417155842}
 // Johannesberg -26.181043152226504, 28.025551235811378
-const joburg = {latitude: -26.181043152226504, longitude: 28.025551235811378}
+const joburg: {latitude: number, longitude: number} = {latitude: -26.181043152226504, longitude: 28.025551235811378}
   return (
       <View className="flex-1 items-center justify-center p-3">
         <H1>gardenstarter!</H1>

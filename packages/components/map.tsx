@@ -21,7 +21,8 @@ const center = {
 //   longitude: 28.025551235811378
 // };
 
-function SunMap({loc}) {
+function SunMap(props: {loc:{latitude: number, longitude: number}}) {
+  const {loc} = props;
   const canvasRef = React.useRef(null);
   const radius = 20;
   
