@@ -1,5 +1,6 @@
 import { log } from "../utilities/logger";
-import { GoogleMapsSolarApiData, SolarApiParams } from "./googleMapsSolarApi";
+import { GoogleMapsSolarApiData } from "./googleMapsSolarApi";
+import { SolarApiParams, WeatherApiParams } from "./microclimate";
 
 export const fetchSolarData = async (params: SolarApiParams) => {
     let data
