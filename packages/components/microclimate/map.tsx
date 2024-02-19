@@ -1,10 +1,78 @@
 'use client'
 import * as React from 'react';
 import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
-import { getDataLayers, getGeoTiff } from '@nora-soderlund/google-maps-solar-api';
-import useLocalStorage from './utilities/useLocalStorage';
+import { getDataLayers, getGeoTiff, DataLayers } from '@nora-soderlund/google-maps-solar-api';
+import useLocalStorage from '../utilities/useLocalStorage';
 import {fromArrayBuffer, ReadRasterResult} from 'geotiff';
-import { InteractionManagerStatic, ProgressBarAndroidComponent } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+
+
+// const SunMap = ({loc}) => {
+//   const {setLocation, solarDataLoaded, rows, columns, daysOfSun} = useSolarData({center: loc, radius: 20})
+
+//   return !solarDataLoaded ? <ActivityIndicator size="large" color="#00ff00" /> : monthMapData.map())
+
+// const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+// const getGoogleMap = () => {}
+// const getSolarApiDataLayers = async (center: GeoCoords, radius: Meters, apiKey: string): Promise<DataLayers> => {
+//   return  getDataLayers(apiKey, {
+//     location: center,
+//     radiusMeters: radius,
+//     view: "FULL_LAYERS"
+//   });
+// }
+// const getTemperatureData = () => {}
+// type LightSource = (center: GeoCoords, radius: Meters) => (row: number, column: number, moment: Moment ) => Hours
+// const getLightData = async (center: GeoCoords, radius: Meters, apiKey: string): Promise<LightSource> => {
+//   const dataLayers = await getSolarApiDataLayers(center, radius, apiKey);
+
+//   if(apiKey && dataLayers.hourlyShadeUrls){
+//     const monthlyShadeData: number[][] = [];
+//       for(let month = 0; month < 12; month++ ){
+//         if(apiKey && dataLayers.hourlyShadeUrls){
+//           let data =  await getGeoTiff(apiKey, dataLayers.hourlyShadeUrls[month]!);
+//           const tiff = await fromArrayBuffer(data);
+//           const tiffImage = await tiff.getImage();
+//           const width = tiffImage.getWidth();
+//           const height = tiffImage.getHeight();
+//           const tiffData: ReadRasterResult = await tiffImage.readRasters();
+//           //raster is per month
+//           //values are indexed by [hour][(row * width) + column]
+//           //values are a bit map of where each bit represents one day of the month
+//           //on is sunny, off is shady
+//           if(tiffData){
+//             let monthResult: number[] = [];
+//             for(let hour = 0; hour < 24; hour++){
+//               let hourData = tiffData[hour];
+//               if(hourData){
+//                 let daysOfSun = 0;
+//                 let index = 0;
+//                 for(let x = 0; x < width; x++){
+//                   for(let y = 0; y < height; y++){
+//                     for(let day = 0; day < daysInMonth[month]!; day++){
+//                       // calculate shade data
+//                       index = (x * width) + y;
+//                       if((hourData[index]! & (1 << day)) > 0){
+//                         daysOfSun++;
+//                       }
+//                     }
+//                     if(monthResult[index] === null || monthResult[index] === undefined) monthResult[index] = 0;
+//                     monthResult[index] += (daysOfSun >= (daysInMonth[month]! / 2) ? 1 : 0);
+//                     daysOfSun = 0
+//                   }
+//                 }
+//               }
+//             }
+//             monthlyShadeData[month] = monthResult;
+//           }
+//         }
+//       }
+//   }
+// } 
+
+
+
 
 const containerStyle = {
   width: 400,
@@ -264,12 +332,16 @@ function SunMap(props: {loc:{latitude: number, longitude: number}}) {
   //     //   <></>
   //     // </GoogleMap>
   // ) : 
-  const divStyle: React.CSSProperties = {display: "flex", flexWrap: "wrap", gap: 5, width: canvasWidth * 6 + 25, height: canvasHeight * 8 + 10};
+  
+  const unselectedScale = 2;
+  const selectedScale = 7;
+  const divStyle: React.CSSProperties = {display: "flex", flexWrap: "wrap", gap: 5, width: canvasWidth * (3 * unselectedScale) + 25, height: canvasHeight * (4 * unselectedScale) + 10};
   const monthMapData = solarData?.monthlyShadeData ?? Array(12).fill(null);
   const monthTemps = monthlyTempData; // [-45,-30,0,10,20,25,30,38,18,0,-25,-67];
+  // const selectMap = useCallback(() => {console.log("clicked ", index); setSelectedMapIndex(() => selectedMapIndex === null ? index : null)},[]);
   return <div style={divStyle} >
-      {monthMapData.map((data, index) => {
-        const scale = selectedMapIndex === null ? 2 : selectedMapIndex ===  index ? 7 : 0;
+      {!solarDataLoaded ? <ActivityIndicator size="large" color="#00ff00" /> : monthMapData.map((data, index) => {
+        const scale = selectedMapIndex === null ? unselectedScale : selectedMapIndex ===  index ? selectedScale : 0;
         return <MonthMap 
                   key={index} 
                   widthpx={canvasWidth} 
@@ -282,11 +354,9 @@ function SunMap(props: {loc:{latitude: number, longitude: number}}) {
     </div>
 }
 
-function MonthMap({widthpx, heightpx, shadeData, averageTemp, scale, onClick}) {
+function MonthMap({widthpx, heightpx, shadeD, averageTemp, scale, onClick}) {
   const canvasRef = React.useRef(null);
   const [canvasReady, setCanvasReady] = React.useState(false);
-  const maxTemperatureVariance = 146; // earth's temps range from -89.3C to 56.7C, a difference of 146
-  const huePerDegree = Math.floor(120 / maxTemperatureVariance); // temps will be divided across a range of 120 hue angle degrees
 
   React.useEffect(() => {
     const canvas: any = canvasRef.current;
@@ -295,44 +365,99 @@ function MonthMap({widthpx, heightpx, shadeData, averageTemp, scale, onClick}) {
     }
   });
 
-  React.useEffect(() => {
-    var hue;
-    if(averageTemp){
-      const hueDegrees = averageTemp;
-      hue = hueDegrees < 6 ? 170 - (hueDegrees - 6) : 60 - hueDegrees; //temps below freezing will be in the blue spectrum and temps above freezing will be in the orange red spectrum 
-    }
-  
+  React.useEffect(()=>{
     const canvas: any = canvasRef.current;
-    console.log({widthpx, heightpx, canvasReady, canvas, shadeData: !!shadeData, scale});
+    if(canvas){
+      canvas.addEventListener('click', onClick);
+    }
+    return () => {
+      canvas.removeEventListener('click', onClick);
+    };
+
+  },[canvasReady, onClick]);
+
+  React.useEffect(() => {
+    const canvas: any = canvasRef.current;
+    // console.log({widthpx, heightpx, canvasReady, canvas, shadeData: !!shadeData, scale});
 
     if(canvas && shadeData){
-      console.log("Rendering");
+      const light = (index: number) => {
+        const hoursOfLight = shadeData[index]! === -9999 ? 0 : shadeData[index]!;
+        const asPercentOfDay = hoursOfLight / 24 * 100;
+        return {hoursOfLight, asPercentOfDay};
+      }
+      const temp = () => {
+        // move 1 hue degree per degree Celsius
+        // temps too cold for plant growth will be in the blue spectrum
+        // temps amenable to plant growth will be in the green-yellow-orange spectrum
+        // temps too hot for plant growth will in the red spectrum 
+        // if including green: 180 - (averageTemp * 4);
+        const hueAngle = 180 - (averageTemp * 4) // averageTemp ? averageTemp < 6 ? 170 - (averageTemp - 6) : 60 - averageTemp : null; 
+        return {averageTemp, hueAngle}
+      }
+      const lightAndTempLayer = (row: number, column: number) => {
+        const index = (row * widthpx) + column;
+
+        const tempData = temp();
+        const hueAngle = tempData.hueAngle;
+        var hue = hueAngle ?? 0;
+        var saturation = hueAngle ? 60 : 0;
+        const lightData = light(index);
+        // show tomato potential
+        // if(lightData.hoursOfLight > 8 && averageTemp > 12 && averageTemp < 30){
+        //   hue = 0;
+        //   // if(lightData.hoursOfLight < 8){
+        //   //   saturation = 30;
+        //   // }
+        // }
+
+        // show peppers potential
+        if(lightData.hoursOfLight > 6 && averageTemp > 21 && averageTemp < 29){
+          hue = 0;
+          // if(lightData.hoursOfLight < 8){
+          //   saturation = 30;
+          // }
+        }
+
+        // // show swiss chard potential
+        // if(lightData.hoursOfLight > 3 && averageTemp > 10 && averageTemp < 24){
+        //   hue = 0;
+        //   // if(lightData.hoursOfLight < 8){
+        //   //   saturation = 30;
+        //   // }
+        // }
+
+        // show lettuce potential
+        // if(lightData.hoursOfLight > 3 && averageTemp > 7 && averageTemp < 21){
+        //   hue = 0;
+        //   // if(lightData.hoursOfLight < 8){
+        //   //   saturation = 30;
+        //   // }
+        // }
+
+        const lightness = lightData.asPercentOfDay;
+
+        return {hue, saturation, lightness};
+      }
+      // console.log("Rendering");
       const context = canvas.getContext('2d');
       context.scale(scale, scale);
       for(let row = 0; row < heightpx; row++) {
         for(let column = 0; column < widthpx; column++) {
-          const index = (row * widthpx) + column;
+          // const index = (row * widthpx) + column;
           
-          const value = shadeData[index]!;
-          if(row < 4 && column < 4) console.log({row, column, value: shadeData[index]});
-          if(value === -9999)
-            continue;
+          // const value = shadeData[index]!;
+          // // if(row < 4 && column < 4) console.log({row, column, value: shadeData[index]});
+          // if(value === -9999)
+          //   continue;
   
-          // Shade overlay goes here
-          context.fillStyle = `hsl(${hue ?? 0} ${hue ? "60%" : "0%"} ${((value / 24) * 100)}%)`;
+          // // Shade overlay goes here
+          const {hue, saturation, lightness} = lightAndTempLayer(row, column);
+          context.fillStyle = `hsl(${hue} ${saturation}% ${lightness}%)`;
+          // console.log(`hsl(${hue} ${saturation}% ${lightness}%)`)
           context.fillRect(column, row, 1, 1);
         }
       }
-      // const clickHandler = () => {
-      //   context.fillStyle = 'blue';
-      //   context.fillRect(0, 0, containerStyle.width, containerStyle.height);
-      // };
-  
-      // canvas.addEventListener('click', clickHandler);
-  
-      // return () => {
-      //   canvas.removeEventListener('click', clickHandler);
-      // };
     }
   },[canvasReady, shadeData, scale])
 
@@ -341,4 +466,4 @@ function MonthMap({widthpx, heightpx, shadeData, averageTemp, scale, onClick}) {
   return <canvas ref={canvasRef} height={(heightpx * scale) + 'px'} width={(widthpx * scale) + 'px'} style={canvasStyle} onClick={onClick} />
 }
 
-export default React.memo(SunMap);
+export default SunMap;
