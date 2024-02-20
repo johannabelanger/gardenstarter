@@ -1,18 +1,21 @@
 'use client'
-import {useState, useRef, useEffect, CSSProperties} from 'react';
+import {useState, useRef, useEffect, CSSProperties, MouseEventHandler, MouseEvent} from 'react';
 import { ActivityIndicator } from 'react-native';
 import { useMicroclimateData } from './useMicroclimateData';
 import { Microclimate, getMicroclimateLayer } from './microclimate';
 import { Plant } from '../plants/data';
+import { GeoCoords, CanvasLayer, Celsius } from './types';
 
-export const YearMap = ({loc, plant}) => {
+export const YearMap = (params: {loc: GeoCoords, plant: Plant | undefined}) => {
+  const {loc, plant} = params;
   const {microclimate} = useMicroclimateData({center: loc, radius: 15});
   const [selectedMonth, setSelectedMonth] = useState<Number | null>(null);
   
   const unselectedScale = 2;
   const selectedScale = 7;
-
-  const divStyle: CSSProperties = {display: "flex", flexWrap: "wrap", gap: 5, width: microclimate ? microclimate.columns(0) * (3 * unselectedScale) + 25 : 0, height: microclimate ? microclimate.rows(0) * (4 * unselectedScale) + 10 : 0};
+  const columns = microclimate?.columns(0);
+  const rows = microclimate?.rows(0);
+  const divStyle: CSSProperties = {display: "flex", flexWrap: "wrap", gap: 5, width: columns ? columns * (3 * unselectedScale) + 25 : 0, height: rows ? rows * (4 * unselectedScale) + 10 : 0};
 
   return !microclimate ? 
         <ActivityIndicator size="large" color="#00ff00" /> :
@@ -109,7 +112,7 @@ function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | 
     }
   },[canvasReady, layers, scale]);
 
-  const toggleScale = (e) => {
+  const toggleScale: MouseEventHandler<HTMLCanvasElement> = (e: MouseEvent<HTMLCanvasElement>) => {
     const canvas: any = canvasRef.current;
     const click = relativeCoords(e, canvas);
     
@@ -117,7 +120,7 @@ function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | 
   };
 
   /* Returns pixel coordinates according to the pixel that's under the mouse cursor**/
-const relativeCoords = (event, canvas) => {
+const relativeCoords = (event: MouseEvent<HTMLCanvasElement>, canvas: HTMLCanvasElement) => {
   var x,y;
   //This is the current screen rectangle of canvas
   var rect = canvas.getBoundingClientRect();

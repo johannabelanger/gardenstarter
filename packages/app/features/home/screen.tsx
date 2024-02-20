@@ -39,7 +39,7 @@ const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
   return (
       <View className="flex-1 items-center justify-start justify-items-start p-3 landscape:p-0 bg-gradient-to-b from-sky-400 to-yellow-100">
         <div className="flex justify-center w-screen p-8">
-          <H1 className="font-amaranth text-3xl text-slate-800">Garden Starter</H1>
+          <H1 className="font-amaranth text-3xl text-white">Garden Starter</H1>
         </div>
         <GardenDesignLayout/>
         {/* <div style={{display: "flex"}}>

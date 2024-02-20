@@ -1,25 +1,25 @@
 
-type Meters = number
-type Celsius = number
-type Hours = number
-type Url = string
-type Percent = number
+export type Meters = number
+export type Celsius = number
+export type Hours = number
+export type Url = string
+export type Percent = number
 
 
 
-type GeoCoords = {
+export type GeoCoords = {
     latitude: number,
     longitude: number,
   }
 
-type Moment = {
+export type Moment = {
     hour?: number,
     day?: number,
     month?: number,
     year?: number,
 }
 
-type MicroclimateMap = {
+export type MicroclimateMap = {
     center: GeoCoords,
     radius: Meters,
     pixelSize: Meters,
@@ -29,20 +29,20 @@ type MicroclimateMap = {
     hasTempData: boolean,
 }
 
-type HSL = {
+export type HSL = {
     hue: number,
     saturation: number,
     lightness: number,
 }
 
-interface CanvasLayer {
+export interface CanvasLayer {
     widthpx: number,
     heightpx: number,
     hslValueAt: (row: number, column: number) => HSL,
     style?: React.CSSProperties,
 }
 
-type MicroclimateMoment = {
+export type MicroclimateMoment = {
     temperature: Celsius,
     light: Hours,
     //slope

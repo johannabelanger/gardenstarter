@@ -1,4 +1,5 @@
-import { Plant } from "../plants/data"
+import { Plant } from "../plants/data";
+import {GeoCoords, Meters, Celsius, CanvasLayer, Percent} from "./types";
 
 export type SolarApiParams = {
     center: GeoCoords, 
@@ -29,12 +30,12 @@ export type WeatherApiParams = {
 
 
 export type MicroclimateParams = {
-    solarData: SolarData
-    weatherData: WeatherData
+    solarData: SolarData | undefined
+    weatherData: WeatherData | undefined
 }
 export type Microclimate = {
-    columns: (month: number) => number, 
-    rows: (month: number) => number, 
+    columns: (month: number) => number | undefined, 
+    rows: (month: number) => number | undefined, 
     monthlyAverageHoursOfSun: (row: number, column: number, month: number) => number | undefined,
     monthlyAverageSunnyPercentOfDay: (row: number, column: number, month: number) => Percent | undefined,
     monthlyAverageTemp: (month: number) => number | undefined,
@@ -72,8 +73,8 @@ export const getMicroclimate: (params: MicroclimateParams) => Microclimate = (pa
     }
 
     return {
-        columns: solarData?.columns, 
-        rows: solarData?.rows,
+        columns: solarData?.columns ? solarData.columns : (month: number) => 0, 
+        rows: solarData?.rows ? solarData.rows : (month: number) => 0,
         monthlyAverageHoursOfSun,
         monthlyAverageSunnyPercentOfDay,
         monthlyAverageTemp,
@@ -81,7 +82,7 @@ export const getMicroclimate: (params: MicroclimateParams) => Microclimate = (pa
 }
 
 export const getMicroclimateLayer: (microclimate: Microclimate, month: number, plant: Plant | undefined) => CanvasLayer  | undefined = 
-    (microclimate: Microclimate, month: number, plant: Plant) => {
+    (microclimate: Microclimate, month: number, plant: Plant | undefined) => {
         // const light = (row: number, column: number) => {
         //     const columns = mc?.columns(month) ?? 0
         //     const index = (row * columns) + column;

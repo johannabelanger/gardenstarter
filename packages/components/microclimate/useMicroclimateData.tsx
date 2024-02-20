@@ -3,6 +3,7 @@ import { solarDataApi } from "./googleMapsSolarApi"
 import { weatherDataApi } from "./openMeteoWeatherApi"
 import { Microclimate, SolarData, WeatherData, getMicroclimate } from "./microclimate"
 import { log } from "../utilities/logger"
+import { GeoCoords, Meters } from './types'
 
 export type MicroclimateParams = {
     center: GeoCoords, 
@@ -72,7 +73,7 @@ export const useMicroclimateData = (locationParams: MicroclimateParams) => {
         return solarApi.getDaysOfSun(row, column, month, hour)
     },[solarDataLoaded])
 
-    const monthlyWeather = useCallback((month) => {
+    const monthlyWeather = useCallback((month: number) => {
         if(!weatherDataLoaded || !weatherApi) { return undefined }
 
         return weatherApi.monthly(month);

@@ -13,7 +13,7 @@ export const fetchSolarData = async (params: SolarApiParams) => {
           localStorage.getItem(JSON.stringify(params)) || '{}'
         )
     } catch (error) {
-        log('error', 'Error fetching from solar data from local storage', error)
+        log('error', 'Error fetching from solar data from local storage', JSON.stringify(error));
     }
     return data
 }
@@ -25,7 +25,7 @@ export const storeSolarData = async (params: SolarApiParams, data: GoogleMapsSol
         console.log("Data length: ", parsedData.length);
         localStorage.setItem(JSON.stringify(params), JSON.stringify(data))
     } catch (error) {
-        log('error', 'Error fetching from solar data from local storage', error)
+        log('error', 'Error fetching from solar data from local storage', JSON.stringify(error));
     }
     return data
 }
@@ -38,7 +38,7 @@ export const fetchWeatherData = async (params: WeatherApiParams) => {
           localStorage.getItem(JSON.stringify(params)) || ''
         )
     } catch (error) {
-        log('error', 'Error fetching from solar data from local storage', error)
+        log('error', 'Error fetching from solar data from local storage', JSON.stringify(error));
     }
     return data
 }
@@ -48,7 +48,7 @@ export const storeWeatherData = async (params: SolarApiParams, data: GoogleMapsS
     try {
         localStorage.setItem(JSON.stringify(params), JSON.stringify(data))
     } catch (error) {
-        log('error', 'Error fetching from solar data from local storage', error)
+        log('error', 'Error fetching from solar data from local storage', JSON.stringify(error));
     }
     return data
 }

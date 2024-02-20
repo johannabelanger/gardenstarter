@@ -1,4 +1,5 @@
 import { WeatherApiParams, WeatherData, WeatherMoment } from "./microclimate"; 
+import { Celsius, GeoCoords } from './types';
 const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31]; 
 
 type OpenMeteoApiData = {
@@ -25,7 +26,7 @@ const fetchDataFromOpenMeteoApi = async (location: GeoCoords) => {
     
     return weatherData
 }
-const ignoreNulls = (f, ...args) => {
+const ignoreNulls = (f: Function, ...args: any[]) => {
     const nonNullArgs = args.filter(a => a !== null && a !== undefined)
     return nonNullArgs.length ? f(...nonNullArgs) : undefined
 }
@@ -53,7 +54,7 @@ export const weatherDataApi: (params: WeatherApiParams) => Promise<WeatherData> 
         let mean = total / count
         monthlyData[month] = {temperature: {minimum, maximum, mean}}
     }
-    const monthly = (month) => {
+    const monthly = (month: number) => {
         return monthlyData[month]
     }
     return {monthly}

@@ -3,6 +3,7 @@ import {fromArrayBuffer, ReadRasterResult} from 'geotiff';
 import { log } from "../utilities/logger";
 import { fetchSolarData, storeSolarData } from './data';
 import { SolarApiParams, SolarData } from './microclimate';
+import { GeoCoords, Meters } from './types';
 
 export const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 
@@ -65,7 +66,7 @@ const fetchDataFromGoogleApi = async (params: SolarApiParams) => {
                 data = {center: params.center, radius: params.radius, scale: 0.1, dataLayers, columns, rows, monthlyShadeData }
             }
         } catch(error){
-            log('error', "Error getting solar data: ", error)
+            log('error', "Error getting solar data: ", JSON.stringify(error));
         }
     }
     return data
@@ -79,7 +80,7 @@ export const solarDataApi: (params: SolarApiParams) => Promise<SolarData> = asyn
         data = await fetchSolarData(params)
         console.log("Solar data: ", data);
     } catch (error) {
-        log('error', 'Error fetching from solar data from local storage', error)
+        log('error', 'Error fetching from solar data from local storage', JSON.stringify(error));
     }
     //try fetch from api
     if(!data?.monthlyShadeData){
@@ -101,7 +102,8 @@ export const solarDataApi: (params: SolarApiParams) => Promise<SolarData> = asyn
         //on is sunny, off is shady
         const width = columns(month);
         const index = (row * width) + column;
-        return data?.monthlyShadeData?.[month]?.[hour]?.[index] || 0
+        const shadeData: any = data.monthlyShadeData;
+        return shadeData?.[month]?.[hour]?.[index] || 0
     }
     
     const getDaysOfSun = (row: number, column: number, month: number, hour: number) => {
