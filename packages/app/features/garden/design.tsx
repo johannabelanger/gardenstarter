@@ -73,78 +73,104 @@ const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
       setOpenDrawer(toggleName);
     }
   };
-  return <div id='garden-design' className='grid grid-rows-12 grid-cols-12 h-full place-content-stretch landscape:grid-rows-6 landscape:grid-cols-[repeat(24,_minmax(0,_1fr))]'>
-    <div id='current-map' className='block col-start-2 col-span-10 row-span-6 landscape:col-start-14 landscape:col-span-11 landscape:row-start-1 landscape:row-span-6 place-content-stretch'>
-      <YearMap loc={corvallis} plant={selectedPlant} />
-      {/* <div id='locations-map' className='flex place-items-center'>
-        <div>
-          <Text>Portland</Text>
-          <YearMap loc={portland} plant={selectedPlant} />
-        </div>
-        <div>
-          <Text>Fairbanks</Text>
-          <YearMap loc={fairbanks} plant={selectedPlant} />
-        </div>
-        <div>
-          <Text>Oslo</Text>
-          <YearMap loc={oslo} plant={selectedPlant} />
-        </div>
-        <div>
-          <Text>Atlanta</Text>
-          <YearMap loc={atlanta} plant={selectedPlant} />
-        </div>
-        <div>
-          <Text>Johannesburg</Text>
-          <YearMap loc={joburg} plant={selectedPlant} />
-        </div>
-        <div>
-          <Text>Phoenix</Text>
-          <YearMap loc={phoenix} plant={selectedPlant} />
-        </div>
-        <div className='flex-column place-content-stretch'>
-          <YearMap loc={corvallis} plant={selectedPlant} />
-          <Text className='align-self-center'>Corvallis</Text>
-        </div>
-         <div>
-          <Text>Coos Bay</Text>
-          <YearMap loc={coosbay} plant={selectedPlant} />
-        </div>
-      </div> */}
+  return <div className="h-full w-full flex flex-col landscape:flex-row-reverse">
+    <div className="h-1/2 w-full landscape:h-full landscape:w-1/2 landscape:ml-auto">
+      <YearMap loc={corvallis} plant={selectedPlant}></YearMap>
     </div>
-    {/* <button id='tools-toggle' className='content-center justify-center col-start-1 col-span-2 row-start-6 row-span-1 landscape:row-start-3' onClick={() => handleDrawerToggle('tools')}>
-      <span>{openDrawer === 'tools' ? 'Close Tools' : 'Open Tools'}</span>
-    </button>
-    <button id='plants-toggle' className='content-center justify-center col-start-11 col-span-2 row-start-6 row-span-1 landscape:col-start-1 landscape:row-start-4' onClick={() => handleDrawerToggle('plants')}>
-      <span>{openDrawer === 'plants' ? 'Close Plants' : 'Open Plants'}</span>
-    </button>
-    {openDrawer === 'tools' ? <div id='tools' className={`p-4 content-center justify-center col-start-2 col-span-10 row-start-7 row-span-6 border border-solid border-sky-500 landscape:col-start-3 landscape:row-start-1`}>
-      <span>Tools coming soon!</span>
-    </div> : null} */}
-    <div id='plants' className={`flex justify-content-center col-start-3 col-span-8 row-start-8 row-span-5 landscape:col-start-3 landscape:row-start-1`}>
-      <div className="flex flex-wrap h-full align-content-center">
-        { plants.map((plant: any) => {
-            const plantIsSelected = selectedPlant?.name === plant.name;
-            if(plant.icon) console.log(plant.icon);
-            // return <Button
-            //   title={plant.name}
-            //   color={plant.name === selectedPlant?.name ? "#00a80b" : "#64748b"} // "#474747"}
-            //   onPress={() => setSelectedPlant(plant)}
-            // />
-            return <div className="flex flex-col align-items-end " style={plantIsSelected ? {border: "1px solid green"}: {border: "none"}}><Pressable key={plant.name} onPress={() => setSelectedPlant(plantIsSelected ? undefined : plant)}>
-                {plant.icon ? 
-                  <Image 
-                    source={{uri: plant.icon}}
-                    resizeMode="contain"
-                    style={{ width: 64, height: 64  }} /> : 
-                  null}
-                <Text className="text-slate-800 text-lg text-bold text-center">{plant.name}</Text>
-              </Pressable></div>
-          })
-        }
-      </div>
+    <div className="w-full h-1/2 mx-auto flex flex-wrap place-content-center landscape:h-full landscape:w-1/2">
+      { plants.map((plant: any) => {
+          const plantIsSelected = selectedPlant?.name === plant.name;
+          if(plant.icon) console.log(plant.icon);
+//           // return <Button
+//           //   title={plant.name}
+//           //   color={plant.name === selectedPlant?.name ? "#00a80b" : "#64748b"} // "#474747"}
+//           //   onPress={() => setSelectedPlant(plant)}
+//           // />
+          return <div className="flex flex-col align-items-end" style={plantIsSelected ? {border: "1px solid green", padding: "0 1.25rem"}: {border: "none", padding: "0 1.25rem"}}><Pressable key={plant.name} onPress={() => setSelectedPlant(plantIsSelected ? undefined : plant)}>
+              {plant.icon ? 
+                <Image 
+                  source={{uri: plant.icon}}
+                  resizeMode="contain"
+                  style={{ width: 64, height: 64  }} /> : 
+                null}
+              <Text className="text-slate-800 text-lg text-bold text-center">{plant.name}</Text>
+            </Pressable></div>
+        })
+      }
     </div>
-    {/* {!openDrawer ? <div id='elevations' className={`block p-4 content-center justify-center col-start-2 col-span-10 row-start-7 row-span-6 border border-solid border-sky-500 landscape:col-start-3 landscape:row-start-1`}>
-      <span>Elevations coming soon!</span>
-    </div> : null} */}
   </div>
+  // return <div id='garden-design' className='grid grid-rows-12 grid-cols-12 h-full place-content-stretch landscape:grid-rows-6 landscape:grid-cols-[repeat(24,_minmax(0,_1fr))]'>
+  //   <div id='current-map' className='block col-start-2 col-span-10 row-span-6 landscape:col-start-14 landscape:col-span-11 landscape:row-start-1 landscape:row-span-6 place-content-stretch'>
+  //     <YearMap loc={corvallis} plant={selectedPlant} />
+  //     {/* <div id='locations-map' className='flex place-items-center'>
+  //       <div>
+  //         <Text>Portland</Text>
+  //         <YearMap loc={portland} plant={selectedPlant} />
+  //       </div>
+  //       <div>
+  //         <Text>Fairbanks</Text>
+  //         <YearMap loc={fairbanks} plant={selectedPlant} />
+  //       </div>
+  //       <div>
+  //         <Text>Oslo</Text>
+  //         <YearMap loc={oslo} plant={selectedPlant} />
+  //       </div>
+  //       <div>
+  //         <Text>Atlanta</Text>
+  //         <YearMap loc={atlanta} plant={selectedPlant} />
+  //       </div>
+  //       <div>
+  //         <Text>Johannesburg</Text>
+  //         <YearMap loc={joburg} plant={selectedPlant} />
+  //       </div>
+  //       <div>
+  //         <Text>Phoenix</Text>
+  //         <YearMap loc={phoenix} plant={selectedPlant} />
+  //       </div>
+  //       <div className='flex-column place-content-stretch'>
+  //         <YearMap loc={corvallis} plant={selectedPlant} />
+  //         <Text className='align-self-center'>Corvallis</Text>
+  //       </div>
+  //        <div>
+  //         <Text>Coos Bay</Text>
+  //         <YearMap loc={coosbay} plant={selectedPlant} />
+  //       </div>
+  //     </div> */}
+  //   </div>
+  //   {/* <button id='tools-toggle' className='content-center justify-center col-start-1 col-span-2 row-start-6 row-span-1 landscape:row-start-3' onClick={() => handleDrawerToggle('tools')}>
+  //     <span>{openDrawer === 'tools' ? 'Close Tools' : 'Open Tools'}</span>
+  //   </button>
+  //   <button id='plants-toggle' className='content-center justify-center col-start-11 col-span-2 row-start-6 row-span-1 landscape:col-start-1 landscape:row-start-4' onClick={() => handleDrawerToggle('plants')}>
+  //     <span>{openDrawer === 'plants' ? 'Close Plants' : 'Open Plants'}</span>
+  //   </button>
+  //   {openDrawer === 'tools' ? <div id='tools' className={`p-4 content-center justify-center col-start-2 col-span-10 row-start-7 row-span-6 border border-solid border-sky-500 landscape:col-start-3 landscape:row-start-1`}>
+  //     <span>Tools coming soon!</span>
+  //   </div> : null} */}
+  //   <div id='plants' className="flex justify-content-center col-start-3 col-span-8 row-start-8 row-span-5 landscape:col-start-3 landscape:row-start-1">
+  //     <div className="flex flex-wrap h-full align-content-center">
+  //       { plants.map((plant: any) => {
+  //           const plantIsSelected = selectedPlant?.name === plant.name;
+  //           if(plant.icon) console.log(plant.icon);
+  //           // return <Button
+  //           //   title={plant.name}
+  //           //   color={plant.name === selectedPlant?.name ? "#00a80b" : "#64748b"} // "#474747"}
+  //           //   onPress={() => setSelectedPlant(plant)}
+  //           // />
+  //           return <div className="flex flex-col align-items-end " style={plantIsSelected ? {border: "1px solid green"}: {border: "none"}}><Pressable key={plant.name} onPress={() => setSelectedPlant(plantIsSelected ? undefined : plant)}>
+  //               {plant.icon ? 
+  //                 <Image 
+  //                   source={{uri: plant.icon}}
+  //                   resizeMode="contain"
+  //                   style={{ width: 64, height: 64  }} /> : 
+  //                 null}
+  //               <Text className="text-slate-800 text-lg text-bold text-center">{plant.name}</Text>
+  //             </Pressable></div>
+  //         })
+  //       }
+  //     </div>
+  //   </div>
+  //   {/* {!openDrawer ? <div id='elevations' className={`block p-4 content-center justify-center col-start-2 col-span-10 row-start-7 row-span-6 border border-solid border-sky-500 landscape:col-start-3 landscape:row-start-1`}>
+  //     <span>Elevations coming soon!</span>
+  //   </div> : null} */}
+  // </div>
 }

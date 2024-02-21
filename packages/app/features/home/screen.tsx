@@ -37,10 +37,13 @@ const phoenix: GeoCoords = {latitude: 33.432594380992526, longitude: -112.103196
 // text-violet-300
 const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
   return (
-      <View className="flex-1 items-center justify-start justify-items-start p-3 landscape:p-0 bg-gradient-to-b from-sky-400 to-yellow-100">
-        <div className="flex justify-center w-screen p-8">
-          <H1 className="font-amaranth text-3xl text-white">Garden Starter</H1>
+      <View className="h-dvh w-dvw bg-gradient-to-b from-sky-400 to-yellow-100">
+        <div className="w-full landscape:w-1/2 flex place-content-center">
+          <H1 className="font-amaranth align-middle text-center text-3xl text-white py-8 landscape:p-0">Garden Starter</H1>
         </div>
+        {/* <div className="flex justify-center w-screen p-8">
+          <H1 className="font-amaranth text-3xl text-white">Garden Starter</H1>
+        </div> */}
         <GardenDesignLayout/>
         {/* <div style={{display: "flex"}}>
           <div style={{display: "flex", flexWrap: "wrap"}}>
@@ -95,7 +98,7 @@ const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
           <span className='p-2'>To-Do</span>
           <span className='p-2'>Journal</span>
         </div> */}
-        <div><span>Vegetables </span><a href="http://www.freepik.com">Designed by AomAm / Freepik</a></div>
+        <p className="w-full h-10 landscape:w-1/2 text-center"><span>Vegetables </span><a href="http://www.freepik.com">Designed by AomAm / Freepik</a></p>
       </View>
   )
 }

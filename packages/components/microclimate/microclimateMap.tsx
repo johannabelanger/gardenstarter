@@ -64,6 +64,10 @@ function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | 
 
     if(canvas && layers.length > 0){
       const context = canvas.getContext('2d');
+      //reset from previously adjusted dimensions back to calculated dimensions
+      canvas.width = canvas.style.width;
+      canvas.height = canvas.style.height;
+      //adjust for dpr
       const rect = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio;
       console.log("DPR: ", dpr);

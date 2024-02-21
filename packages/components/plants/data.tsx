@@ -24,7 +24,7 @@ export type Plant = {
 // "https://cdn-icons-png.flaticon.com/128/1790/1790387.png",
 const tomato: Plant = {
   name: "Tomato",
-  icon: "https://cdn-icons-png.flaticon.com/128/4056/4056876.png", 
+  icon: "https://cdn-icons-png.flaticon.com/128/2149/2149888.png", 
   light: {
     minimum: 6,
     ideal: 8
