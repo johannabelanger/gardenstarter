@@ -1,13 +1,13 @@
 'use client'
 import {useState, useRef, useEffect, CSSProperties, MouseEventHandler, MouseEvent} from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, useWindowDimensions } from 'react-native';
 import { useMicroclimateData } from './useMicroclimateData';
 import { Microclimate, getMicroclimateLayer } from './microclimate';
 import { Plant } from '../plants/data';
 import { GeoCoords, CanvasLayer, Celsius } from './types';
 
-export const YearMap = (params: {loc: GeoCoords, plant: Plant | undefined}) => {
-  const {loc, plant} = params;
+export const YearMap = (params: {loc: GeoCoords, plant: Plant | undefined, canvas:any}) => {
+  const {loc, plant, canvas} = params;
   const {microclimate} = useMicroclimateData({center: loc, radius: 15});
   const [selectedMonth, setSelectedMonth] = useState<Number | null>(null);
   
@@ -22,25 +22,42 @@ export const YearMap = (params: {loc: GeoCoords, plant: Plant | undefined}) => {
         <MonthMap
           microclimate={microclimate} 
           plant={plant}
+          canvas={canvas}
         />
 }
-function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | undefined}){
-  const {microclimate, plant} = props;
-  const canvasRef = useRef(null);
+function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | undefined, canvas: any}){
+  const {microclimate, plant, canvas} = props;
   const [canvasReady, setCanvasReady] = useState(false);
   
   const [layers, setLayers] = useState<any>([]);
   const unselectedScale = 3;
   const selectedScale = 2;
   const [scale, setScale] = useState(unselectedScale);
+  // const getDimensions = () => {
+  //   const window = Dimensions.get('window');
+  //   const screen = Dimensions.get('screen');
+  //   return {window: {...window}, screen: {...screen}};
+  // }
+  // const [dimensions, setDimensions] = useState(getDimensions());
+  const {height, width} = useWindowDimensions();
 
+  // useEffect(() => {
+  //   // const canvas: any = canvasRef.current;
+  //   if(canvas && !canvasReady){
+  //     setCanvasReady(true);
+  //   }
+  // });
 
-  useEffect(() => {
-    const canvas: any = canvasRef.current;
-    if(canvas && !canvasReady){
-      setCanvasReady(true);
-    }
-  });
+  // useEffect(() => {
+  //   console.log("Render");
+  //   const callback = () => setDimensions(getDimensions());
+
+  //   const subscription = Dimensions.addEventListener('change', callback);
+
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, []);
 
   useEffect(() => {
     if(microclimate){
@@ -57,9 +74,11 @@ function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | 
       setLayers(layers);
     }
   },[microclimate, plant]); 
+  const drawCanvas = () => {
 
+  }
   useEffect(() => {
-    const canvas: any = canvasRef.current;
+    //const canvas: any = canvasRef.current;
     // console.log({widthpx, heightpx, canvasReady, canvas, shadeData: !!shadeData, scale});
 
     if(canvas && layers.length > 0){
@@ -107,17 +126,17 @@ function MonthMap(props: {microclimate: Microclimate | undefined, plant:Plant | 
           }
         }
         context.font = "9px Unknown Font, sans-serif, bold";
-        context.fillStyle = "rgb(30 41 59)"; // set stroke color to white
+        context.fillStyle = "rgb(30 41 59)"; // set stroke color to dark gray
         context.lineWidth = dpr.toString();  //  set stroke width to 1
         let labelCol = layers[month].columnOffset + 8;
         let labelRow = layers[month].rowOffset + layers[month].microclimate.heightpx + 9;
         context.fillText(layers[month].microclimate.monthName, labelCol, labelRow);
       }
     }
-  },[canvasReady, layers, scale]);
+  },[canvas, layers, scale]);
 
   const toggleScale: MouseEventHandler<HTMLCanvasElement> = (e: MouseEvent<HTMLCanvasElement>) => {
-    const canvas: any = canvasRef.current;
+    //const canvas: any = canvasRef.current;
     const click = relativeCoords(e, canvas);
     
     setScale(scale === unselectedScale ? selectedScale : unselectedScale);
@@ -148,5 +167,6 @@ const relativeCoords = (event: MouseEvent<HTMLCanvasElement>, canvas: HTMLCanvas
   return [x,y];
 }
 
-  return microclimate ? <canvas ref={canvasRef} style={{height:"100%", width:"100%", imageRendering: "pixelated"}} onClick={toggleScale} /> : null
+  // return microclimate ? <canvas ref={canvasRef} style={{height:"100%", width:"100%", imageRendering: "pixelated"}} onClick={toggleScale} /> : null
+  return <div style={{display: "none"}} />
 }

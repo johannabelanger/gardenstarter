@@ -1,14 +1,19 @@
 
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import { Text } from 'app/design/typography';
 
 import {Button, ScrollView, Pressable, Image} from 'react-native';
 import {YearMap} from '../../../components/microclimate/microclimateMap';
+import {CarouselItem, Carousel} from '../../../components/basic/carousel'
 
 import {plants} from '../../../components/plants/data';
 type GeoCoords = {
   latitude: number,
   longitude: number,
+};
+type Location = {
+  label: string,
+  location: GeoCoords,
 };
 export function GardenDesignLayout(){
   const [openDrawer, setOpenDrawer] = useState<string | null>(null);
@@ -64,20 +69,37 @@ const river: GeoCoords = {latitude: 44.06388963008179, longitude: -123.105995227
 const hollow: GeoCoords = {latitude: 44.932757005037324, longitude: -123.03990907682012}
 // Thoreau Cabin 42.44208226938825, -71.34252740053623
 const thoreau: GeoCoords = {latitude: 42.44208226938825, longitude: -71.34252740053623}
+const locations: Location[] = [
+  {label: "Oregon", location: corvallis},
+  {label: "Alaska", location: fairbanks},
+  {label: "Georgia", location: atlanta},
+  {label: "Arizona", location: phoenix},
+];
 const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
+const [currentLocation, setCurrentLocation] = useState<Location>(locations[0] ?? {label: "Oregon", location: corvallis});
+const canvasRef = useRef(null);
 
-  const handleDrawerToggle = (toggleName: string) => {
-    if(openDrawer === toggleName){
-      setOpenDrawer(null);
-    } else {
-      setOpenDrawer(toggleName);
-    }
-  };
+  // const handleDrawerToggle = (toggleName: string) => {
+  //   if(openDrawer === toggleName){
+  //     setOpenDrawer(null);
+  //   } else {
+  //     setOpenDrawer(toggleName);
+  //   }
+  // };
   return <div className="h-full w-full flex flex-col landscape:flex-row-reverse">
     <div className="h-1/2 w-full landscape:h-full landscape:w-1/2 landscape:ml-auto">
-      <YearMap loc={corvallis} plant={selectedPlant}></YearMap>
+      <canvas ref={canvasRef} style={{height:"100%", width:"100%", imageRendering: "pixelated"}} />
+      {locations.map((location) =>
+        <YearMap 
+          key={location.label} 
+          loc={location.location} 
+          plant={selectedPlant} 
+          canvas={currentLocation.label === location.label? canvasRef.current : null}
+        />)
+      }
     </div>
     <div className="w-full h-1/2 mx-auto flex flex-wrap place-content-center landscape:h-full landscape:w-1/2">
+      <Carousel contents={locations} onNavigate={(location) => {console.log("Changing to ", location); if(location) setCurrentLocation(location)}}></Carousel>
       { plants.map((plant: any) => {
           const plantIsSelected = selectedPlant?.name === plant.name;
           if(plant.icon) console.log(plant.icon);
@@ -86,7 +108,7 @@ const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
 //           //   color={plant.name === selectedPlant?.name ? "#00a80b" : "#64748b"} // "#474747"}
 //           //   onPress={() => setSelectedPlant(plant)}
 //           // />
-          return <div className="flex flex-col align-items-end" style={plantIsSelected ? {border: "1px solid green", padding: "0 1.25rem"}: {border: "none", padding: "0 1.25rem"}}><Pressable key={plant.name} onPress={() => setSelectedPlant(plantIsSelected ? undefined : plant)}>
+          return <div key={plant.name} className="flex flex-col align-items-end" style={plantIsSelected ? {border: "1px solid green", padding: "0 1.25rem"}: {border: "none", padding: "0 1.25rem"}}><Pressable key={plant.name} onPress={() => setSelectedPlant(plantIsSelected ? undefined : plant)}>
               {plant.icon ? 
                 <Image 
                   source={{uri: plant.icon}}
