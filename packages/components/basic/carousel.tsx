@@ -7,10 +7,10 @@ export type CarouselItem = {
 
 export type CarouselParams = {
   contents: CarouselItem[], 
-  onNavigate: (current: CarouselItem) => void,
+  onNavigate: (current: any) => void,
 }
 
-export const Carousel: (CarouselParams) => ReactNode = ({contents, onNavigate}) => {  
+export const Carousel: (params: CarouselParams) => ReactNode = ({contents, onNavigate}) => {  
   const [currentIndex, setCurrentIndex] = useState(0);
   const current = contents?.[currentIndex] ?? {label: ""};
   const previous = contents?.[currentIndex - 1] ?? {label: ""};

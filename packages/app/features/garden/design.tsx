@@ -76,7 +76,7 @@ const locations: Location[] = [
   {label: "Arizona", location: phoenix},
 ];
 const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
-const [currentLocation, setCurrentLocation] = useState<Location>(locations[0] ?? {label: "Oregon", location: corvallis});
+const [currentLocation, setCurrentLocation] = useState<any>(locations[0] ?? {label: "Oregon", location: corvallis});
 const canvasRef = useRef(null);
 
   // const handleDrawerToggle = (toggleName: string) => {
@@ -99,7 +99,7 @@ const canvasRef = useRef(null);
       }
     </div>
     <div className="w-full h-1/2 mx-auto flex flex-wrap place-content-center landscape:h-full landscape:w-1/2">
-      <Carousel contents={locations} onNavigate={(location) => {console.log("Changing to ", location); if(location) setCurrentLocation(location)}}></Carousel>
+      <Carousel contents={locations} onNavigate={(location: any) => {console.log("Changing to ", location); if(location) setCurrentLocation(location)}}></Carousel>
       { plants.map((plant: any) => {
           const plantIsSelected = selectedPlant?.name === plant.name;
           if(plant.icon) console.log(plant.icon);
