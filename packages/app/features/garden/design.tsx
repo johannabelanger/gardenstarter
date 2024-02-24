@@ -1,5 +1,5 @@
 
-import {useState, useRef} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import { Text } from 'app/design/typography';
 
 import {Button, ScrollView, Pressable, Image} from 'react-native';
@@ -77,7 +77,15 @@ const locations: Location[] = [
 ];
 const [selectedPlant, setSelectedPlant] = useState<any | undefined>(undefined);
 const [currentLocation, setCurrentLocation] = useState<any>(locations[0] ?? {label: "Oregon", location: corvallis});
+const [canvasReady, setCanvasReady] = useState(false);
 const canvasRef = useRef(null);
+
+useEffect(() => {
+  // const canvas: any = canvasRef.current;
+  if(canvasRef && !canvasReady){
+    setCanvasReady(true);
+  }
+});
 
   // const handleDrawerToggle = (toggleName: string) => {
   //   if(openDrawer === toggleName){
@@ -99,7 +107,7 @@ const canvasRef = useRef(null);
       }
     </div>
     <div className="w-full h-1/2 mx-auto flex flex-wrap place-content-center landscape:h-full landscape:w-1/2">
-      <Carousel contents={locations} onNavigate={(location: any) => {console.log("Changing to ", location); if(location) setCurrentLocation(location)}}></Carousel>
+      <Carousel contents={locations} onNavigate={(location: any) => {if(location) setCurrentLocation(location)}} />
       { plants.map((plant: any) => {
           const plantIsSelected = selectedPlant?.name === plant.name;
           if(plant.icon) console.log(plant.icon);
